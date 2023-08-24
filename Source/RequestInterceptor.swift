@@ -256,8 +256,11 @@ open class Interceptor: RequestInterceptor {
             switch result {
             case let .success(urlRequest):
                 self.adapt(urlRequest, for: session, using: pendingAdapters, completion: completion)
+                pendingAdapters.removeAll()
+
             case .failure:
                 completion(result)
+                pendingAdapters.removeAll()
             }
         }
     }
@@ -280,8 +283,11 @@ open class Interceptor: RequestInterceptor {
             switch result {
             case let .success(urlRequest):
                 self.adapt(urlRequest, using: state, adapters: pendingAdapters, completion: completion)
+                pendingAdapters.removeAll()
+
             case .failure:
                 completion(result)
+                pendingAdapters.removeAll()
             }
         }
     }
@@ -308,9 +314,12 @@ open class Interceptor: RequestInterceptor {
             switch result {
             case .retry, .retryWithDelay, .doNotRetryWithError:
                 completion(result)
+                pendingRetriers.removeAll()
+
             case .doNotRetry:
                 // Only continue to the next retrier if retry was not triggered and no error was encountered
                 self.retry(request, for: session, dueTo: error, using: pendingRetriers, completion: completion)
+                pendingRetriers.removeAll()
             }
         }
     }
