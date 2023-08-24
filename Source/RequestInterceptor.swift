@@ -252,9 +252,7 @@ open class Interceptor: RequestInterceptor {
 
         let adapter = pendingAdapters.removeFirst()
 
-        adapter.adapt(urlRequest, for: session) { [weak self] result in
-            guard let self = self else { return }
-
+        adapter.adapt(urlRequest, for: session) { [unowned self] result in
             switch result {
             case let .success(urlRequest):
                 self.adapt(urlRequest, for: session, using: pendingAdapters, completion: completion)
@@ -278,9 +276,7 @@ open class Interceptor: RequestInterceptor {
 
         let adapter = pendingAdapters.removeFirst()
 
-        adapter.adapt(urlRequest, using: state) { [weak self] result in
-            guard let self = self else { return }
-
+        adapter.adapt(urlRequest, using: state) { [unowned self] result in
             switch result {
             case let .success(urlRequest):
                 self.adapt(urlRequest, using: state, adapters: pendingAdapters, completion: completion)
@@ -308,9 +304,7 @@ open class Interceptor: RequestInterceptor {
 
         let retrier = pendingRetriers.removeFirst()
 
-        retrier.retry(request, for: session, dueTo: error) { [weak self] result in
-            guard let self = self else { return }
-
+        retrier.retry(request, for: session, dueTo: error) { [unowned self] result in
             switch result {
             case .retry, .retryWithDelay, .doNotRetryWithError:
                 completion(result)
